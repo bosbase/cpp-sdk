@@ -31,6 +31,7 @@ class LangChaingoService;
 class LLMDocumentService;
 class CacheService;
 class GraphQLService;
+class SQLService;
 class BatchService;
 
 class BosBase {
@@ -67,6 +68,7 @@ public:
     std::unique_ptr<LLMDocumentService> llmDocuments;
     std::unique_ptr<CacheService> caches;
     std::unique_ptr<GraphQLService> graphql;
+    std::unique_ptr<SQLService> sql;
 
     BeforeSendHook beforeSend;
     AfterSendHook afterSend;

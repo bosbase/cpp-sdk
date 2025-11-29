@@ -58,11 +58,28 @@ int main() {
 - `langchaingo`, `llmDocuments`, `graphql`
 - `pubsub`: WebSocket publish/subscribe
 - `realtime`: SSE-based realtime topics (used by `RecordService::subscribe`)
+- `sql`: Superuser-only SQL execution via `/api/sql/execute`
 - `createBatch()`: queue multi-collection CRUD requests transactionally
 
 Hooks:
 - `pb.beforeSend(url, options)` to mutate outgoing requests
 - `pb.afterSend(status, headers, data)` to normalize responses
+
+### Vector & SQL examples
+
+```cpp
+// Vector operations (collection name required)
+VectorCollectionConfig cfg;
+cfg.dimension = 384;
+pb.vectors->createCollection("documents", cfg);
+pb.vectors->insert("documents", VectorDocument{.vector = {0.1f, 0.2f, 0.3f}, .content = "Example"});
+
+// SQL (superuser)
+auto sqlResult = pb.sql->execute("SELECT 1 AS value");
+if (!sqlResult.rows.empty()) {
+    std::cout << "SQL value: " << sqlResult.rows[0][0] << std::endl;
+}
+```
 
 ## Notes
 

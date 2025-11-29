@@ -19,4 +19,5 @@
 #include "bosbase/services/llm_document.h"
 #include "bosbase/services/cache.h"
 #include "bosbase/services/graphql.h"
+#include "bosbase/services/sql.h"
 #include "bosbase/services/batch.h"

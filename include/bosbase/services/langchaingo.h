@@ -37,7 +37,7 @@ public:
     }
 
     nlohmann::json queryDocuments(
-        const LangChaingoRAGRequest& payload,
+        const LangChaingoDocumentQueryRequest& payload,
         const std::map<std::string, nlohmann::json>& query = {},
         const std::map<std::string, std::string>& headers = {}) {
         SendOptions opts;
@@ -49,12 +49,12 @@ public:
     }
 
     nlohmann::json sql(
-        const nlohmann::json& payload,
+        const LangChaingoSQLRequest& payload,
         const std::map<std::string, nlohmann::json>& query = {},
         const std::map<std::string, std::string>& headers = {}) {
         SendOptions opts;
         opts.method = "POST";
-        opts.body = payload;
+        opts.body = payload.toJson();
         opts.query = query;
         opts.headers = headers;
         return client.send("/api/langchaingo/sql", std::move(opts));

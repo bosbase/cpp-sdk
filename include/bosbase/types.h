@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
@@ -168,6 +169,46 @@ struct LangChaingoRAGRequest {
     }
 };
 
+struct LangChaingoDocumentQueryRequest {
+    std::string collection;
+    std::string query;
+    std::optional<LangChaingoModelConfig> model;
+    std::optional<int> topK;
+    std::optional<double> scoreThreshold;
+    std::optional<LangChaingoRAGFilters> filters;
+    std::optional<std::string> promptTemplate;
+    std::optional<bool> returnSources;
+
+    nlohmann::json toJson() const {
+        nlohmann::json payload;
+        payload["collection"] = collection;
+        payload["query"] = query;
+        if (model) payload["model"] = model->toJson();
+        if (topK) payload["topK"] = *topK;
+        if (scoreThreshold) payload["scoreThreshold"] = *scoreThreshold;
+        if (filters) payload["filters"] = filters->toJson();
+        if (promptTemplate) payload["promptTemplate"] = *promptTemplate;
+        if (returnSources) payload["returnSources"] = *returnSources;
+        return payload;
+    }
+};
+
+struct LangChaingoSQLRequest {
+    std::string query;
+    std::optional<std::vector<std::string>> tables;
+    std::optional<int> topK;
+    std::optional<LangChaingoModelConfig> model;
+
+    nlohmann::json toJson() const {
+        nlohmann::json payload;
+        payload["query"] = query;
+        if (tables) payload["tables"] = *tables;
+        if (topK) payload["topK"] = *topK;
+        if (model) payload["model"] = model->toJson();
+        return payload;
+    }
+};
+
 struct LLMDocument {
     std::string id;
     std::string content;
@@ -215,6 +256,36 @@ struct LLMQueryOptions {
         if (filter) payload["filter"] = *filter;
         if (includeDocument) payload["includeDocument"] = *includeDocument;
         return payload;
+    }
+};
+
+struct SQLExecuteRequest {
+    std::string query;
+
+    nlohmann::json toJson() const {
+        return {{"query", query}};
+    }
+};
+
+struct SQLExecuteResponse {
+    std::vector<std::string> columns;
+    std::vector<std::vector<std::string>> rows;
+    std::optional<int64_t> rowsAffected;
+
+    static SQLExecuteResponse fromJson(const nlohmann::json& data) {
+        SQLExecuteResponse res;
+        if (data.is_object()) {
+            if (data.contains("columns") && data["columns"].is_array()) {
+                res.columns = data["columns"].get<std::vector<std::string>>();
+            }
+            if (data.contains("rows") && data["rows"].is_array()) {
+                res.rows = data["rows"].get<std::vector<std::vector<std::string>>>();
+            }
+            if (data.contains("rowsAffected") && !data["rowsAffected"].is_null()) {
+                res.rowsAffected = data["rowsAffected"].get<int64_t>();
+            }
+        }
+        return res;
     }
 };
 

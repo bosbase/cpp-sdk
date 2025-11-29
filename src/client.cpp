@@ -20,6 +20,7 @@
 #include "bosbase/services/realtime.h"
 #include "bosbase/services/record.h"
 #include "bosbase/services/settings.h"
+#include "bosbase/services/sql.h"
 #include "bosbase/services/vector.h"
 
 namespace bosbase {
@@ -72,6 +73,7 @@ BosBase::BosBase(const std::string& base_url, std::shared_ptr<AuthStore> auth_st
     llmDocuments = std::make_unique<LLMDocumentService>(*this);
     caches = std::make_unique<CacheService>(*this);
     graphql = std::make_unique<GraphQLService>(*this);
+    sql = std::make_unique<SQLService>(*this);
 }
 
 BosBase::BosBase(BosBase&& other) noexcept
@@ -93,6 +95,7 @@ BosBase::BosBase(BosBase&& other) noexcept
       llmDocuments(std::move(other.llmDocuments)),
       caches(std::move(other.caches)),
       graphql(std::move(other.graphql)),
+      sql(std::move(other.sql)),
       beforeSend(std::move(other.beforeSend)),
       afterSend(std::move(other.afterSend)) {
 }
@@ -117,6 +120,7 @@ BosBase& BosBase::operator=(BosBase&& other) noexcept {
         llmDocuments = std::move(other.llmDocuments);
         caches = std::move(other.caches);
         graphql = std::move(other.graphql);
+        sql = std::move(other.sql);
         beforeSend = std::move(other.beforeSend);
         afterSend = std::move(other.afterSend);
     }
